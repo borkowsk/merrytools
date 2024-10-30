@@ -3,7 +3,7 @@
  *
  *      Created by borkowsk on 10.12.22.
  *      Names changed from `create` into `xD` 11.12.23
- *  @date 2024-10-24 (last modification)
+ *  @date 2024-10-31 (last modification)
  */
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "google-explicit-constructor"
@@ -11,6 +11,7 @@
 #define WB_SIMULATIONS_VECTORS_H
 
 #include <string_view>
+#include <iostream>
 
 namespace merry_tools::math {
 
@@ -56,37 +57,37 @@ namespace merry_tools::math {
     // AXIS FOR BASIC FLAT SYSTEM:
     //*///////////////////////////
 
-    /// @brief Any type of axis should derive from axis template
-    /// \tparam DERIVED -  derived class (see `time` below)
+    /// @brief Any type of axis should derive from axis template.
+    /// \tparam DERIVED - derived class (see `time` below).
     /// \tparam SYSTEM - should be type derived from `coordinate_system` template.
     template<class DERIVED,class SYSTEM>
     struct axis                                              { WB_STATIC_INSIDE_CLASS const char* name(){ return "?"; } };
 
-    /// @brief Time pseudo-axis --> https://en.wikipedia.org/wiki/Time_in_physics
+    /// @brief Time pseudo-axis --> https://en.wikipedia.org/wiki/Time_in_physics ...
     /// @note The smallest time step considered theoretically observable is called the Planck time,
-    ///       which is approximately 5.391×10−44 seconds
+    ///       which is approximately 5.391×10−44 seconds.
     struct Time:        public axis<Time,Flat_simulation>     { WB_STATIC_INSIDE_CLASS const char* name(){ return "t"; }
                                                                                                 } static on_time;
-    /// @brief Mass pseudo-axis --> https://en.wikipedia.org/wiki/Mass
+    /// @brief Mass pseudo-axis --> https://en.wikipedia.org/wiki/Mass ...
     struct Mass:        public axis<Mass,Flat_simulation>     { WB_STATIC_INSIDE_CLASS const char* name(){ return "m"; }
                                                                                                 } static on_mass;
-    /// @brief Temperature pseudo-axis --> https://en.wikipedia.org/wiki/Thermodynamic_temperature
+    /// @brief Temperature pseudo-axis --> https://en.wikipedia.org/wiki/Thermodynamic_temperature ...
     struct Temperature: public axis<Temperature,Flat_simulation> { WB_STATIC_INSIDE_CLASS const char* name(){return "T";}
                                                                                                 } static on_temperature;
-    /// @brief Latitude -> https://en.wikipedia.org/wiki/Length
+    /// @brief Latitude -> https://en.wikipedia.org/wiki/Length ...
     struct Along:       public axis<Along,Flat_simulation>    { WB_STATIC_INSIDE_CLASS const char* name(){ return "X"; }
                                                                                                 } static is_along;
-    /// @brief Longitude -> https://en.wikipedia.org/wiki/Length
+    /// @brief Longitude -> https://en.wikipedia.org/wiki/Length ...
     struct Across:      public axis<Across,Flat_simulation>   { WB_STATIC_INSIDE_CLASS const char* name(){ return "Y"; }
                                                                                                 } static is_across;
-    /// @brief Altitude -> https://en.wikipedia.org/wiki/Length
+    /// @brief Altitude -> https://en.wikipedia.org/wiki/Length ...
     struct Upward:     public axis<Upward,Flat_simulation>    { WB_STATIC_INSIDE_CLASS const char* name(){ return "Z"; }
                                                                                                 } static is_upward;
 
     // TEMPLATE FOR ANY PHYSICAL UNITS:
     //*////////////////////////////////
 
-    /// @brief Base class for any physical unit
+    /// @brief Base class for any physical unit.
     /// \tparam DERIVED
     template<class DERIVED>
     struct physical_unit { WB_STATIC_INSIDE_CLASS const char* abbreviation() { return "[?]"; }};
@@ -114,6 +115,10 @@ namespace merry_tools::math {
 
     // TEMPLATE FOR PHYSICAL QUANTITIES MEASURED IN ANY UNITS:
     //*///////////////////////////////////////////////////////
+    template<class DERIVED,class UNIT>
+    struct Quantity;
+    template<class DERIVED,class UNIT>
+    std::ostream&      operator << (std::ostream& s,const Quantity<DERIVED,UNIT>& );
 
     /** @brief Base for any physical quantity measured in particular unit.
      *  \tparam DERIVED
@@ -122,7 +127,7 @@ namespace merry_tools::math {
     struct Quantity {
         // STATIC INFOS:
         //*/////////////
-        WB_STATIC_INSIDE_CLASS  char* abbreviation() { return UNIT::abbreviation(); }
+        WB_STATIC_INSIDE_CLASS const char * abbreviation() { return UNIT::abbreviation(); }
 
         // SOLE VALUE:
         //*///////////
@@ -153,6 +158,18 @@ namespace merry_tools::math {
         constexpr Quantity operator * (const double& m) const   { return Quantity{value * m };      }
 
         constexpr Quantity operator / (const double& d) const   { return Quantity{ value / d };     }
+
+        friend
+        constexpr bool     operator == (const Quantity& a,const Quantity& b) { return a.value == b.value; }
+
+        friend
+        constexpr bool     operator != (const Quantity& a,const Quantity& b) { return a.value != b.value; }
+
+        friend
+        std::ostream&      operator << (std::ostream& s,const Quantity<DERIVED,UNIT>& q) {
+            s<<q.value<<abbreviation();
+            return s;
+        }
     };
 
 /// @brief Macro which defines elements required for body of any class derived from `Quantity`
@@ -238,7 +255,7 @@ namespace merry_tools::math {
     // PHYSICAL SCALARS TEMPLATE:
     //*//////////////////////////
 
-    /** @brief Scalar template binds physical quantity with the particular axis of the particular coordinate system
+    /** @brief Scalar template binds physical quantity with the particular axis of the particular coordinate system.
      * \tparam AXIS - axis type for value
      * \tparam QUANTITY - measure */
     template<class AXIS,class QUANTITY>
@@ -251,7 +268,7 @@ namespace merry_tools::math {
 
         // SOLE VALUE:
         //*///////////
-        QUANTITY val; //!< A value in specific units on a given axis
+        QUANTITY val; //!< A value in specific units on a given axis.
 
         // CONSTRUCTORS:
         //*/////////////
@@ -270,6 +287,12 @@ namespace merry_tools::math {
         constexpr Scalar operator * (const double& m) const { return Scalar{val * m };}
 
         constexpr Scalar operator / (const double& d) const { return Scalar{val / d };}
+
+        friend
+        constexpr bool operator == (const Scalar& a,const Scalar& b) { return a.val==b.val; }
+
+        friend
+        constexpr bool operator != (const Scalar& a,const Scalar& b) { return a.val!=b.val; }
     };
 
     // /// @brief ???

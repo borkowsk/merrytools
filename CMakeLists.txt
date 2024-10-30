@@ -1,4 +1,4 @@
-# @date 2024-10-24 (last modification)
+# @date 2024-10-31 (last modification)
 cmake_minimum_required(VERSION 3.27)
 project(merry_tools_tests)
 
@@ -19,4 +19,6 @@ add_executable( merry_tests
         "${SOURCES}/ios_benders.cpp"
         #tests/
         "tests/main.cpp"
+        inc/mem_unique_val.h
+        src/test_uniques.cpp
 )

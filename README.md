@@ -1,4 +1,5 @@
 # Merry Tools For C++
+## @date 2024-10-31 (version 0.1)
 
 Content:
 * Math calculations    - merry_tools::math / energy
@@ -13,6 +14,10 @@ C++ 17 physical vectors
 ...
 
 ## merry_tools::mem::guard
+
+...
+
+## merry_tools::mem::unique_val
 
 ...
 

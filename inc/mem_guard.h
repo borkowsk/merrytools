@@ -1,6 +1,6 @@
 /** @file
  * @brief  A control value/field template with a given length and uniq value.
- * @date 2024-10-24 (last modification)
+ * @date 2024-10-31 (last modification)
  */
 #ifndef MEMORY_GUARD_H
 #define MEMORY_GUARD_H
@@ -15,7 +15,7 @@ namespace merry_tools::memory {
      *           the field has simply been destroyed or erased.
      *           Typically, a block of memory freed by delete is modified in the first few leading bytes,
      *           but the rest of the data is left intact.
-     *  @tparam UnsType - internal field type. Expected any unsigned int types
+     *  @tparam UnsignedType - internal field type. Expected any unsigned int types
      *  @tparam DEF_VALUE - default value for internal field. Should be unique as much as possible.
      *                      Do not use 0 , 0xDEADBEEF or any similar, often used in debugging.
      *
@@ -24,10 +24,10 @@ namespace merry_tools::memory {
      *        before including this header. But You have to be informed, that this macro works only
      *        for one adjacent inclusion of "guard.h"!
      */
-    template<typename UnsType,UnsType DEF_VALUE,unsigned DESTR_SHIFT=4>
+    template<typename UnsignedType,UnsignedType DEF_VALUE,unsigned DESTR_SHIFT=4>
     class [[maybe_unused]] guard {
 
-        UnsType value=DEF_VALUE; //!< If everything is OK, this field has the value `DEF_VALUE`
+        UnsignedType value=DEF_VALUE; //!< If everything is OK, this field has the value `DEF_VALUE`
                                  //!< for the entire lifetime of the containing object.
     public:
         guard()=default; //!< @brief Only available default constructor.

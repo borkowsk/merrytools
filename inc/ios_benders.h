@@ -1,6 +1,6 @@
-/// IOS bender to magik standardowych strumieni.
-//==============================================
-/// @date 2024-10-24 (last modification)
+/// @file
+/// @brief IOS bender to magik standardowych strumieni.
+/// @date 2024-10-31 (last modification)
 /// To bogato rozrodzona rodzinka pochodząca od ojca: `ios_bender`.
 /// Dzieci to `text_at_end`, `keep_io_flags`, `ios_teacher` a kolejne w drodze 👅.
 /// Więcej możliwości:
