@@ -1,21 +1,23 @@
 /// @file
 /// @brief Test suite for `merry_tools`
-/// @date 2024-10-31 (modification)
+/// @date 2025-04-04 (modification)
 #include "mth_vectors.h"
 #include "mth_fix_float.h"
 #include "ios_benders.h"
 #include "mem_guard.h"
 #include "mem_unique_val.h"
+#include "lgc_boolean.h"
 
 #include <iostream>
 
-using namespace ::merry_tools::iostreams;
+using namespace ::merry_tools::logic;
 using namespace ::merry_tools::math;
 using namespace ::merry_tools::memory;
+using namespace ::merry_tools::iostreams;
 
 UNIQUE_GLOBAL(unsigned,unsigned,uONE,1) ///< Global `unique_val` for `unsigned` "hierarchy" and value 1.
-UNIQUE_GLOBAL(UFloat16,unsigned,ONE,1) ///< Global `unique_val` for `UFloat16` hierarchy and value 1.
-UNIQUE_GLOBAL(UFloat16,unsigned,TWO,2) ///< Global `unique_val` for `UFloat16` hierarchy and value 2.
+UNIQUE_GLOBAL(UFloat16,unsigned,ONE,1)  ///< Global `unique_val` for `UFloat16` hierarchy and value 1.
+UNIQUE_GLOBAL(UFloat16,unsigned,TWO,2)  ///< Global `unique_val` for `UFloat16` hierarchy and value 2.
 
 namespace merry_tools::tests {
     void print_namespace_variables(std::ostream& o);
@@ -23,6 +25,7 @@ namespace merry_tools::tests {
     // Also declared in test_uniques, but with different IN_CLASS_UNIQUE 👅
     class dummy2 {
     public:
+        lgc_boolean good;
 //        IN_CLASS_UNIQUE(::merry_tools::math::UFloat16,unsigned,FIVE,5)
 //        IN_CLASS_UNIQUE(::merry_tools::math::UFloat16,unsigned,TEN,10)
         IN_CLASS_UNIQUE(::merry_tools::math::UFloat16,unsigned,ELEV,11)
@@ -168,12 +171,24 @@ namespace merry_tools::tests {
 int main() {
     using namespace merry_tools::tests;
 
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, World!" << std::endl << std::flush;
+
+    dummy2 testDummy2;
 
     if(!test_ios_benders(std::clog) ) return 1;
     if(!test_vectors_bending(std::clog)) return 2;
     if(!test_uniques_val(std::clog)) return 3;
 
-    std::cout << "SUCCESS!" << std::endl;
+    testDummy2.good=true;  //Valid
+    //testDummy2.good=1;   //Not valid
+    //testDummy2.good=lgc_boolean{1};  //Not valid
+    //testDummy2.good=1.0; //Not valid
+    //testDummy2.good=lgc_boolean{1.0};  //Not valid
+    //testDummy2.good= nullptr;  //Not valid
+    //testDummy2.good=lgc_boolean{ &testDummy2 };  //Not valid
+
+    std::clog.flush(); std::cout.flush();
+
+    std::cout << "SUCCESS! " <<(testDummy2.good?"True":"False")<< std::endl;
     return 0;
 }
