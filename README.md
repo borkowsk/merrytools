@@ -28,3 +28,8 @@ C++ 17 physical vectors
 ## merry_tools::ios::str_benders
 
 C++ 14 streams smart manipulators.
+
+
+## Donation
+[☕☕☕ Coffee](https://buycoffee.to/adalbertus)<br>
+[🪙 🪙  PayPal](https://www.paypal.com/paypalme/wborkowsk)
