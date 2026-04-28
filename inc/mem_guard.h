@@ -1,6 +1,6 @@
 /** @file
  * @brief  A control value/field template with a given length and uniq value.
- * @date 2024-10-31 (last modification)
+ * @date 2026-04-28 (last modification)
  */
 #ifndef MEMORY_GUARD_H
 #define MEMORY_GUARD_H
@@ -8,9 +8,10 @@
 #include <cassert>
 
 namespace merry_tools::memory {
+
     /** @brief A simple control field template with a given length and value
      *  @details The default value is given in the constructor, and shifted to a single hexadecimal digit in the
-     *           destructor. The only function checks if the value is still valid. Checking whether it is the shifted
+     *           destructor. The only functions check if the value is still valid. Checking whether it is the shifted
      *           value or something completely different allows you to distinguish whether the object containing
      *           the field has simply been destroyed or erased.
      *           Typically, a block of memory freed by delete is modified in the first few leading bytes,
@@ -93,10 +94,10 @@ namespace merry_tools::memory {
 /// _NDEBUG safe memory guard field placing.
 /// @note Written in a lengthy manner on purpose so that there would be somewhere to insert brake-points!
 #   define MEMORY_GUARD(type,value) ::merry_tools::memory::guard<type,value> _debug_memory_marker; \
-                                    bool valid_memory(const void* ptr) const       \
+                            bool valid_memory(const void* ptr=(void*)1) const      \
                                     {                                              \
                                       if(ptr!=nullptr) {                           \
-                                        if(_debug_memory_marker.is_valid())        \
+                                        if(_debug_memory_marker.is_constructed())  \
                                                        return true;                \
                                       }                                            \
                                       /*WB_TRAP("invalid memory of the object!");*/\
@@ -110,4 +111,10 @@ namespace merry_tools::memory {
 #   undef NO_MEMORY_GUARDS
 #   endif
 
+/* ****************************************************************** */
+/*               MERRY TOOLS by WOJCIECH BORKOWSKI                    */
+/*    See: https://github.com/borkowsk                                */
+/*     or: https://www.researchgate.net/profile/Wojciech-Borkowski    */
+/*    ☕☕☕: https://buycoffee.to/adalbertus                            */
+/* ****************************************************************** */
 #endif //MEMORY_GUARD_H
