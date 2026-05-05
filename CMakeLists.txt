@@ -1,8 +1,8 @@
-# @date 2025-04-04 (last modification)
+# @date 2026-05-05 (last modification)
 cmake_minimum_required(VERSION 3.27)
 project(merry_tools_tests)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set( INCLUDE "inc" )
 set( SOURCES "src" )
@@ -23,4 +23,5 @@ add_executable( merry_tests
         src/test_uniques.cpp
         inc/lgc_boolean.cpp
         inc/lgc_boolean.h
+        inc/rust_like.hpp
 )

@@ -1,9 +1,10 @@
-/** @file vectors.h @brief Typed vectors for simulations.
+/** @file vectors.h
+ *  @brief Typed vectors for simulations.
+ *  @date 2026-05-05 (last modification)
  *  @details
- *
  *      Created by borkowsk on 10.12.22.
  *      Names changed from `create` into `xD` 11.12.23
- *  @date 2024-10-31 (last modification)
+ *  @date 2026-05-05 (last modification)
  */
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "google-explicit-constructor"

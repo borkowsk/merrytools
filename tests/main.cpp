@@ -1,12 +1,13 @@
 /// @file
 /// @brief Test suite for `merry_tools`
-/// @date 2025-04-04 (modification)
+/// @date 2026-05-05 (modification)
 #include "mth_vectors.h"
 #include "mth_fix_float.h"
 #include "ios_benders.h"
 #include "mem_guard.h"
 #include "mem_unique_val.h"
 #include "lgc_boolean.h"
+#include "rust_like.hpp"
 
 #include <iostream>
 
@@ -166,6 +167,190 @@ namespace merry_tools::tests {
         return true;
     }
 
+    // ============================================================================
+    // WSTĘPNA FUNKCJA TESTUJĄCA DLA rust_like
+    // ============================================================================
+    bool test_rust_like(std::ostream& o)
+    {
+        using namespace rust_like;
+        using namespace std;
+#if HAS_F128
+        f128 kosmiczna_precyzja = 3.14159265358979323846264338327950288Q;
+        // Uwaga: przy __float128 używa się przyrostka 'Q' (np. 1.0Q) zamiast 'f' czy 'L'
+        o<<"Wsparcie dla f128 jest aktywne!<\n"<<endl;
+#else
+        o<<"Ta platforma nie obsługuje natywnie 128-bitowych liczb zmiennoprzecinkowych."<<endl;
+#endif
+        // Przeciążenie 1: Integral -> Integral
+        u8 a = as<u8>(300u); // Standardowe obcięcie bitów (300 % 256) -> wynik: 44
+        o << "300 as u8 = " << (int)a << std::endl;
+
+        // Przeciążenie 2: Float -> Integral
+        u8 b = as<u8>(300.5f); // Wartość > 255 nasyca do max -> wynik: 255
+        u8 c = as<u8>(-50.0);  // Wartość < 0 nasyca do min -> wynik: 0
+
+        o << "300.5f as u8 = " << (int)b << std::endl;
+        o << "-50.0 as u8  = " << (int)c << std::endl;
+
+        try {
+            // 1. Dokładna konwersja (mieści się w 24 bitach mantysy float)
+            int64_t bezpieczna = 16777215; // 2^24 - 1
+            float f1 = as<float>(bezpieczna);
+            o << "OK: " << f1 << "\n"; // Zadziała bez problemu
+
+            // 2. Konwersja ze stratą precyzji (wymaga więcej niż 24 bity)
+            int64_t niebezpieczna = 16777217; // 2^24 + 1
+            float f2 = as<float>(niebezpieczna); // Rzuci wyjątek!
+            o << "To się nie wypisze: " << f2 << "\n";
+
+        } catch (const std::exception& e) {
+            o << "ERROR: " << e.what() << "\n";
+        }
+
+        // BŁĘDY KOMPILACJI:
+        // /////////////////
+
+        /// Przykład A: Próba rzutowania double -> float
+        //float f = as<float>(3.14);
+
+        /// Przykład B: Próba użycia własnego typu
+        UFloat16 obiekt;
+        int x = as<int>(obiekt);
+
+        return true;
+    }
+
+    // ============================================================================
+    // GŁÓWNA FUNKCJA TESTUJĄCA DLA rust_like
+    // ============================================================================
+    bool test_rust_like2(std::ostream& o)
+    {
+        using namespace rust_like;
+        using namespace std;
+
+        bool caly_test_ok = true;
+        int numer_testu = 1;
+
+        o << "====================================================================\n";
+        o << "             URUCHAMIANIE TESTOW NUMERYCZNYCH 'as<T>()'            \n";
+        o << "====================================================================\n\n";
+
+        // Lambda ułatwiająca formatowanie i zbieranie wyników
+        auto raportuj = [&](const char* nazwa, bool warunek_sukcesu, const std::string& info) {
+            o << "Test #" << numer_testu++ << " [" << nazwa << "]: ";
+            if (warunek_sukcesu) {
+                o << "[ OK ]\n   -> " << info << "\n";
+            } else {
+                o << "[ BLAD ]\n   -> " << info << "\n";
+                caly_test_ok = false;
+            }
+            o << "--------------------------------------------------------------------\n";
+        };
+
+        // --- TEST 1: Reinterpretacja bitowa (i8 na u8) ---
+        {
+            i8 wejscie = -1;
+            u8 wynik = as<u8>(wejscie);
+            bool ok = (wynik == 255);
+            raportuj("Bitcast (i8 -> u8)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: 255)");
+        }
+
+        // --- TEST 2: Obcinanie bitów / Modulo (u16 na u8) ---
+        {
+            u16 wejscie = 300;
+            u8 wynik = as<u8>(wejscie);
+            bool ok = (wynik == 44); // 300 % 256 = 44
+            raportuj("Modulo (u16 -> u8)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: 44)");
+        }
+
+        // --- TEST 3: Nasycenie w górę (double na u8) ---
+        {
+            double wejscie = 500.5;
+            u8 wynik = as<u8>(wejscie);
+            bool ok = (wynik == 255);
+            raportuj("Nasycenie gora (f64 -> u8)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: 255)");
+        }
+
+        // --- TEST 4: Nasycenie w dół (float na i8) ---
+        {
+            float wejscie = -1000.f;
+            i8 wynik = as<i8>(wejscie);
+            bool ok = (wynik == -128);
+            raportuj("Nasycenie dol (f32 -> i8)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: -128)");
+        }
+
+        // --- TEST 5: Obsługa wartości NaN ---
+        {
+            double wejscie = std::numeric_limits<double>::quiet_NaN();
+            i32 wynik = as<i32>(wejscie);
+            bool ok = (wynik == 0);
+            raportuj("Obsluga NaN (f64 -> i32)", ok,
+                     "Wejscie: NaN | Wynik: " + std::to_string(wynik) + " (Oczekiwano: 0)");
+        }
+
+        // --- TEST 6: Konwersja bezstratna (i16 na float - compile-time path) ---
+        {
+            i16 wejscie = 32000;
+            float wynik = as<float>(wejscie);
+            bool ok = (wynik == 32000.0f);
+            raportuj("Bezstratna (i16 -> f32)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: 32000.0)");
+        }
+
+        // --- TEST 7: Na granicy precyzji - SUKCES (i64 na float) ---
+        {
+            i64 wejscie = 16777215; // 2^24 - 1 (Miesci sie w 24-bitowej mantysie f32)
+            bool wyjatek = false;
+            float wynik = 0;
+            try {
+                wynik = as<float>(wejscie);
+            } catch (const std::exception&) {
+                wyjatek = true;
+            }
+            bool ok = (!wyjatek && wynik == 16777215.0f);
+            raportuj("Na granicy mantysy - Sukces (i64 -> f32)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | Wynik: " + std::to_string(wynik) + " (Oczekiwano: Bez wyjatku)");
+        }
+
+        // --- TEST 8: Na granicy precyzji - OCZEKIWANY BŁĄD (i64 na float) ---
+        {
+            i64 wejscie = 16777217; // 2^24 + 1 (Wykracza poza 24-bitowa mantyse f32)
+            bool wyjatek = false;
+            std::string blad_msg = "";
+            try {
+                as<float>(wejscie);
+            } catch (const std::exception& e) {
+                wyjatek = true;
+                blad_msg = e.what();
+            }
+            bool ok = wyjatek;
+            raportuj("Przekroczenie mantysy - Blad (i64 -> f32)", ok,
+                     "Wejscie: " + std::to_string(wejscie) +
+                         " | " + (wyjatek ? "Zlapano oczekiwany wyjatek: \"" + blad_msg + "\"" : "BLAD: Wyjatek nie zostal rzucony!"));
+        }
+
+        // --- PODSUMOWANIE ---
+        o << "\n====================================================================\n";
+        if (caly_test_ok) {
+            o << "   STATUS KONCOWY: WSZYSTKIE TESTY ZAKONCZONE SUKCESEM [ OK ]       \n";
+        } else {
+            o << "   STATUS KONCOWY: NIEKTÓRE TESTY ZAKONCZYLY SIE BLĘDEM [ FAIL ]    \n";
+        }
+        o << "====================================================================\n";
+
+        return caly_test_ok;
+    }
+
 } // tests namespace
 
 int main() {
@@ -178,6 +363,8 @@ int main() {
     if(!test_ios_benders(std::clog) ) return 1;
     if(!test_vectors_bending(std::clog)) return 2;
     if(!test_uniques_val(std::clog)) return 3;
+    if(!test_rust_like(std::clog)) return 4;
+    if(!test_rust_like2(std::clog)) return 4;
 
     testDummy2.good=true;  //Valid
     //testDummy2.good=1;   //Not valid
