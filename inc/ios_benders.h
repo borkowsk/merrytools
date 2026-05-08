@@ -1,25 +1,25 @@
 /// @file
 /// @brief IOS bender to magik standardowych strumieni.
-/// @date 2024-10-31 (last modification)
+/// @date 2026-05-08 (last modification)
 /// To bogato rozrodzona rodzinka pochodząca od ojca: `ios_bender`.
 /// Dzieci to `text_at_end`, `keep_io_flags`, `ios_teacher` a kolejne w drodze 👅.
 /// Więcej możliwości:
 /// *   https://dev.to/pauljlucas/custom-c-stream-manipulators-nil
 /// *   https://github.com/mathbunnyru/funny-cpp
-/// Created by w-borkowski on 23.10.24 wieczorem.
+/// Created by W.Borkowski on 23.10.24 wieczorem.
 ///
 #ifndef IOS_BENDERS_H
 #define IOS_BENDERS_H
 #include <iomanip>
 #include <iostream>
 
-namespace merry_tools::iostreams {
+namespace merry_tools::streams {
 
     // ESC sequences defining colors on an ANSI terminal:
 //*//////////////////////////////////////////////////
 // \033 is the octal ESC character code. See: "https://en.wikipedia.org/wiki/ANSI_escape_code"
     [[maybe_unused]]
-    const std::string  NOCOLO="\033[0m";                 ///< Back to default color
+    const std::string  NOCOLO="\033[0m";                 ///< Back to a default color
 //[[maybe_unused]]
 //const std::string  NORMCO="\033[0m";                 ///< Back to default color
     [[maybe_unused]]
@@ -39,7 +39,7 @@ namespace merry_tools::iostreams {
     [[maybe_unused]]
     const std::string  COLOR0="\033[30m";                ///< DEFAULT BLACK
     [[maybe_unused]]
-    const std::string  COLERR="\033[31m";                ///< RED as error marker
+    const std::string  COLERR="\033[31m";                ///< RED as an error marker
     [[maybe_unused]]
     const std::string  ERCOLO="\033[38;2;255;100;100m";  ///< Set LIGHT RED foreground color 	Next arguments are 5;nm or 2;r;g;bm
     [[maybe_unused]]
@@ -56,11 +56,11 @@ namespace merry_tools::iostreams {
     protected:
         std::ios_base* the_stream=nullptr;
     public:
-        ios_bender() {}
+        ios_bender() = default;
         explicit ios_bender(std::ios_base& stream) : the_stream(&stream) {}
         /// Destruktor wirtualny MUSI zostać zdefiniowany u potomstwa (choć ta klasa ma go faktycznie, bo mieć musi 🤔).
         virtual ~ios_bender()=0;
-        /// Sprawdza, czy wszystko ustawione i nie trzeba wywoływać `set() `.
+        /** Sprawdza, czy wszystko ustawione i nie trzeba wywoływać `set () `. */ [[nodiscard]]
         virtual bool is_set() const { return the_stream != nullptr; }
         /// Wywoływane w operatorze `<<` jeśli `is_set() ` zwróci `false`.
         virtual void set(std::ios_base& stream) { the_stream = &stream; }
@@ -72,7 +72,7 @@ namespace merry_tools::iostreams {
         return os;
     }
 
-    /// Przeciążenie operatora "<<" dla teoretycznie nie modyfikowalnych "benderów".
+    /// Przeciążenie operatora "<<" dla teoretycznie niemodyfikowalnych "benderów".
     /** @note W rzeczywistości muszą być modyfikowane, przynajmniej wtedy, gdy nie mają ustawionego strumienia, ale też
      *        w innych sytuacjach (choćby zmienne tymczasowe wstrzykiwane w strumień z pomocą konstruktora są `const`).
      *        Dlatego wewnątrz tego operatora `const` jest zdejmowane. */

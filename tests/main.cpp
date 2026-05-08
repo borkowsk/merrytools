@@ -1,6 +1,6 @@
 /// @file
 /// @brief Test suite for `merry_tools`
-/// @date 2025-04-04 (modification)
+/// @date 2026-05-08 (modification)
 #include "mth_vectors.h"
 #include "mth_fix_float.h"
 #include "ios_benders.h"
@@ -13,7 +13,7 @@
 using namespace ::merry_tools::logic;
 using namespace ::merry_tools::math;
 using namespace ::merry_tools::memory;
-using namespace ::merry_tools::iostreams;
+using namespace ::merry_tools::streams;
 
 UNIQUE_GLOBAL(unsigned,unsigned,uONE,1) ///< Global `unique_val` for `unsigned` "hierarchy" and value 1.
 UNIQUE_GLOBAL(UFloat16,unsigned,ONE,1)  ///< Global `unique_val` for `UFloat16` hierarchy and value 1.
