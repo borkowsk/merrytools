@@ -1,6 +1,6 @@
 /// @file
 /// @brief ....
-/// @date 2024-10-31 (modification)
+/// @date 2026-05-08 (modification)
 /// Created by borkowsk on 30.10.24.
 
 #include "mth_fix_float.h"
@@ -42,6 +42,7 @@ namespace merry_tools::tests {
     };
 
     DEFINE_IN_CLASS_UNIQUE(dummy2,::merry_tools::math::UFloat16,unsigned,FIVE,5) ///< Required definition completing declaration in class.
+        using T_lim = std::numeric_limits<Target>;
     DEFINE_IN_CLASS_UNIQUE(dummy2,::merry_tools::math::UFloat16,unsigned,TEN,10) ///< Required definition completing declaration in class.
 
     class dummy3: public dummy2
