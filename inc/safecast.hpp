@@ -1,6 +1,6 @@
 /// @prototyped by Gemini
 /// Kluczowe mechanizmy działania: Porównanie Signed vs Unsigned: Najgroźniejszym błędem w C++ jest porównanie if (-1 < 1u). W surowym kodzie wynik to false, ponieważ -1 jest konwertowane na ogromną liczbę dodatnią. Nasz szablon dzięki if constexpr (std::is_signed_v<Source> && !std::is_signed_v<Target>) wyłapuje to ryzyko przed wykonaniem porównania.std::numeric_limits<T>::lowest(): Jest kluczowe dla typów zmiennoprzecinkowych. Dla float, min() zwraca najmniejszą liczbę dodatnią (bliską zeru), a lowest() zwraca faktyczną granicę ujemną (np. $-3.4 \times 10^{38}$).Wydajność: Dzięki zastosowaniu if constexpr, wszystkie te sprawdzenia "logiczne" dzieją się w trakcie kompilacji. Wygenerowany kod maszynowy zawiera tylko te instrukcje if, które są sensowne dla danej pary typów.Dlaczego to jest lepsze niż static_cast?static_cast w C++ nie wykonuje żadnych sprawdzeń w czasie wykonywania programu. Jeśli rzutujesz 300 na unsigned char, otrzymasz po prostu 44 (wynik ucięcia bitów), a program nie poinformuje Cię o błędzie. SafeCaster gwarantuje integralność danych.
-/// @date 2026 (last modification)
+/// @date 2026-05-09 (last modification)
 
 #include <limits>
 #include <stdexcept>

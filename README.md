@@ -8,6 +8,8 @@ Content:
 * IO streams  bending - merry_tools::streams / water
 * Filesystems bending - merry_tools::fsys / earth
 
+![UNDER CONSTRUCTION](./doc/animated-under-construction.gif)
+
 ## merry_tools::math::phvector
 
 C++ 17 physical vectors

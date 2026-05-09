@@ -1,5 +1,5 @@
 /// @file
-/// @date 2026 (last modification)
+/// @date 2026-05-09 (last modification)
 #include "safecast.hpp"
 #include <iostream>
 #include <string>
@@ -19,7 +19,7 @@ void run_test(const std::string& label, auto action) {
 int main() {
     // PRZYPADEK 1: Ujemna liczba do typu bez znaku (unsigned)
     run_test("int (-1) do unsigned int", []() {
-        int x = -1;/// @date 2026 (last modification)
+        int x = -1;/// @date 2026-05-09 (last modification)
         SafeCaster<unsigned int>::cast(x);
     });
 
