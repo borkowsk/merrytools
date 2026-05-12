@@ -15,6 +15,7 @@ add_executable( merry_tests
         "${INCLUDE}/lgc_boolean.h"
         "${INCLUDE}/mem_guard.h"
         "${INCLUDE}/mem_unique_val.h"
+        "${INCLUDE}/mth_to.h"
         "${INCLUDE}/mth_fix_float.h"
         "${INCLUDE}/mth_vectors.h"
         "${INCLUDE}/rust_like.hpp"
@@ -26,3 +27,5 @@ add_executable( merry_tests
         "tests/testuniq/test_uniques.cpp"
         "tests/safecasttests/safecasttests.cpp"
 )
+
+inc/mth_to.hpp

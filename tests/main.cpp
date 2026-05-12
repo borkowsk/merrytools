@@ -15,6 +15,8 @@ using namespace ::merry_tools::logic;
 using namespace ::merry_tools::math;
 using namespace ::merry_tools::memory;
 using namespace ::merry_tools::streams;
+using namespace ::merry_tools::rust_like;
+using namespace std; // Także dlatego żeby wyłapywac ewentualne konflikty.
 
 UNIQUE_GLOBAL(unsigned,unsigned,uONE,1) ///< Global `unique_val` for `unsigned` "hierarchy" and value 1.
 UNIQUE_GLOBAL(UFloat16,unsigned,ONE,1)  ///< Global `unique_val` for `UFloat16` hierarchy and value 1.
@@ -187,8 +189,6 @@ namespace merry_tools::tests {
     /// WSTĘPNA FUNKCJA TESTUJĄCA DLA rust_like.
     bool test_rust_like(std::ostream& o)
     {
-        using namespace rust_like;
-        using namespace std;
         o << COLOR2;
         o << "====================================================================\n";
         o << "               URUCHAMIANIE WSTĘPNYCH TESTOW 'as<T>()'              \n";

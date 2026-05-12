@@ -1,8 +1,8 @@
 /** @file
  *  @brief Klasa/y okrojonych float-ów
- *  @date 2024-10-24 (modification) */
-#ifndef FLOAT16_H
-#define FLOAT16_H
+ *  @date 2026-05-12 (modification) */
+#ifndef MTH_FLOAT16_H
+#define MTH_FLOAT16_H
 
 #include <cstdint>
 #include <cassert>
@@ -62,4 +62,4 @@ namespace merry_tools::math {
     /** @} */
 } // merry_tools namespace
 
-#endif // FLOAT16_H
+#endif // MTH_FLOAT16_H

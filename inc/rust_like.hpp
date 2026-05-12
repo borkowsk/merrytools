@@ -17,7 +17,7 @@
 #include <limits>
 #include <stdexcept>
 
-namespace rust_like
+namespace merry_tools::rust_like
 {
     /// @name Typy rustowe całkowite bez znaku (Unsigned Integers)
     /// @{
