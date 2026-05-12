@@ -1,19 +1,20 @@
 /** @file vectors.h
  *  @brief Typed vectors for simulations.
- *  @date 2026-05-08 (last modification)
+ *  @date 2026-05-12 (last modification)
+ *        ===============================
  *  @details
  *      Created by borkowsk on 10.12.22.
  *      Names changed from `create` into `xD` 11.12.23
- *  @date 2026-05-08 (last modification)
+ *  @date 2026-05-12 (last modification)
  */
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "google-explicit-constructor"
 #ifndef WB_SIMULATIONS_VECTORS_H
 #define WB_SIMULATIONS_VECTORS_H
 
 #include <string_view>
 #include <iostream>
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "google-explicit-constructor"
 namespace merry_tools::math {
 
     /// @brief Helper for comparing char* by value.
@@ -668,7 +669,6 @@ namespace merry_tools::math {
     constexpr inline auto operator - ( const ADDEND1& a1,const ADDEND2& a2){ return xD(a1,-a2); }
 }
 
+#pragma clang diagnostic pop
 
 #endif //WB_SIMULATIONS_VECTORS_H
-
-#pragma clang diagnostic pop

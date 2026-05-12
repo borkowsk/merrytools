@@ -1,5 +1,8 @@
-/// @date 2026-05-08 (last modification)
-/// Created by w-borkowski on 23.10.24.
+/// @file
+/// @date 2026-05-12 (last modification)
+/// @brief  Implementacje dla hierarchi `ios_bender`
+///         ========================================
+/// @details Created by w-borkowski on 23.10.24.
 ///
 #include "ios_benders.h"
 

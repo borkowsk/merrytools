@@ -24,10 +24,14 @@
 ///             nie poinformuje Cię o błędzie. `SafeCaster` czy `safe_cast` gwarantują integralność danych.
 ///
 /// @prototyped by Gemini
+#ifndef MERRY_TOOLS_SAFE_CASTS_HPP_INCLUDED_
+#define MERRY_TOOLS_SAFE_CASTS_HPP_INCLUDED_
 
 #include <limits>
 #include <stdexcept>
 #include <type_traits>
+
+namespace merry_tools::math {
 
 template <typename Target>
 class SafeCaster {
@@ -38,20 +42,29 @@ public:
         using S_lim = std::numeric_limits<Source>;
 
         // 1. Sprawdzenie dolnej granicy
-        if constexpr (std::is_signed_v<Source> && !std::is_signed_v<Target>) {
+        if constexpr (std::is_signed_v<Source> && !std::is_signed_v<Target>)
+        {
             // Jeśli źródło jest ujemne, a cel bez znaku -> błąd
-            if (value < 0) throw std::out_of_range("Negative to unsigned cast");
-        } else {
+            if (value < 0)
+                throw std::out_of_range("Negative to unsigned cast");
+
+            return static_cast<Target>(value);
+        }
+        else
+        {
             // Standardowe sprawdzenie dla reszty (uwzględnia zmiennoprzecinkowe)
-            if (value < static_cast<Source>(T_lim::lowest())) {
+            if (value < static_cast<Source>(T_lim::lowest()))
+            {
                 throw std::out_of_range("Underflow: value too small");
             }
         }
 
         // 2. Sprawdzenie górnej granicy
         // Jeśli cel jest mniejszy niż źródło, musimy uważać na przepełnienie
-        if constexpr (sizeof(Source) >= sizeof(Target)) {
-            if (value > static_cast<Source>(T_lim::max())) {
+        if constexpr (sizeof(Source) >= sizeof(Target))
+        {
+            if (value > static_cast<Source>(T_lim::max()))
+            {
                 throw std::out_of_range("Overflow: value too large");
             }
         }
@@ -88,4 +101,6 @@ Target safe_cast(Source value) {
     return static_cast<Target>(value);
 }
 
+} // end of namespace
 
+#endif //MERRY_TOOLS_SAFE_CASTS_HPP_INCLUDED_

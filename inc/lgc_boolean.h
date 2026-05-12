@@ -1,8 +1,9 @@
 /** @file
  *  @brief Klasa bezpiecznych wartości logicznych.
- *  @date 2025-04-04 (modification)
- *  @details Created by borkowsk on 04.04.25. */
-
+ *  @date 2026-05-12 (modification)
+ *        ========================================
+ *  @details Created by borkowsk on 04.04.25.
+ */
 #ifndef MERRY_TOOLS_TESTS_LGC_BOOLEAN_H
 #define MERRY_TOOLS_TESTS_LGC_BOOLEAN_H
 

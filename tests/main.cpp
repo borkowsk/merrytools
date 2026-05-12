@@ -1,8 +1,11 @@
 /// @file
 /// @brief Test suite for `merry_tools`
 /// @date 2026-05-12 (modification)
+///       =============================
+///
 #include "mth_vectors.h"
 #include "mth_fix_float.h"
+#include "mth_to.h"
 #include "ios_benders.h"
 #include "mem_guard.h"
 #include "mem_unique_val.h"
@@ -42,6 +45,7 @@ namespace merry_tools::tests {
     UFloat16 fl=123.5;
     unsigned one=::ONE;
 
+    /// Funkcja testuje wartości unikalne, choć główne testowanie odbywa się na poziomie kompilacji.
     bool test_uniques_val(std::ostream& o)
     {
         o << COLOR2;
@@ -60,6 +64,7 @@ namespace merry_tools::tests {
         return one_==1 && two_==2;
     }
 
+    /// Funkcja testuje "magików io", a przy okazji kolory terminalowe.
     bool test_ios_benders(std::ostream& o)
     {
         o << COLOR2;
@@ -91,6 +96,7 @@ namespace merry_tools::tests {
         return true;
     }
 
+    /// Funkcja testującą typy skalarne i wektorowe z `merry_tools::math`.
     bool test_vectors_bending(std::ostream& o)
     {
         o << COLOR2;
@@ -245,7 +251,11 @@ namespace merry_tools::tests {
     }
 
 
-    /// GŁÓWNA FUNKCJA TESTUJĄCA DLA `rust_like`.
+/**
+ * @brief Funkcja testująca szablon rust_like::as<TARGET>(SOURCE).
+ * @param o Strumień wyjściowy do raportowania wyników (np. std::cout).
+ * @return true jeśli wszystkie testy przeszły pomyślnie, false w przeciwnym razie.
+ */
     bool test_rust_like2(std::ostream& o)
     {
         using namespace rust_like;
@@ -380,20 +390,133 @@ namespace merry_tools::tests {
 
 } // tests namespace
 
+/**
+ * @brief Funkcja testująca szablon mth::to<TARGET>(SOURCE).
+ * @param o Strumień wyjściowy do raportowania wyników (np. std::cout).
+ * @return true jeśli wszystkie testy przeszły pomyślnie, false w przeciwnym razie.
+ */
+    bool test_saturating_to(std::ostream& o) {
+        bool all_ok = true;
+        int test_counter = 1;
+
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "          TESTOWANIE KONWERSJI WYSYCAJACEJ: to<TARGET>(src)         \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
+
+        auto report = [&](const std::string& desc, bool condition, const std::string& detail) {
+            o <<COLOR4<< "Test " << std::setw(2) << test_counter++ << " [" << desc << "]: "<<NOCOLO;
+            if (condition) {
+                o <<COLOR2<< "[ PASS ]\n   -> " <<NOCOLO<< detail << "\n";
+            } else {
+                o <<COLOR3<< "[ FAIL ]\n   -> " <<COLOR1<< detail <<NOCOLO<< "\n";
+                all_ok = false;
+            }
+            o << "--------------------------------------------------------------------\n";
+        };
+
+        // --- TEST 1: Standardowe rozszerzenie (Zero overhead path) ---
+        {
+            uint8_t src = 127;
+            auto res = to<int32_t>(src);
+            report("Promotion", res == 127, "uint8_t(127) -> int32_t: " + std::to_string(res));
+        }
+
+        // --- TEST 2: Nasycenie koloru (Float HDR -> Byte LDR) ---
+        {
+            float color_val = 1.5f; // "Jaśniejszy niż biały"
+            auto res = to<uint8_t>(color_val * 255.0f);
+            report("HDR Saturation", res == 255, "float(382.5) -> uint8_t: " + std::to_string((int)res));
+        }
+
+        // --- TEST 3: Wartości ujemne do typu bez znaku (Saturate to 0) ---
+        {
+            int32_t temperature = -50;
+            auto res = to<uint16_t>(temperature);
+            report("Negative to Unsigned", res == 0, "int32_t(-50) -> uint16_t: " + std::to_string(res));
+        }
+
+        // --- TEST 4: Duże liczby całkowite (Saturate to Max) ---
+        {
+            int64_t massive = 9999999999LL;
+            auto res = to<int16_t>(massive);
+            report("Int64 to Int16 Max", res == 32767, "int64_t(9.9e9) -> int16_t: " + std::to_string(res));
+        }
+
+        // --- TEST 5: Zmiennoprzecinkowe do całkowitych (Saturate to Min) ---
+        {
+            double very_low = -1e20;
+            auto res = to<int32_t>(very_low);
+            report("Double to Int32 Min", res == std::numeric_limits<int32_t>::lowest(),
+                   "double(-1e20) -> int32_t: " + std::to_string(res));
+        }
+
+        // --- TEST 6: Obsługa NaN (Not a Number) ---
+        {
+            double my_nan = std::numeric_limits<double>::quiet_NaN();
+            auto res = to<int32_t>(my_nan);
+            report("NaN Handling", res == 0, "double(NaN) -> int32_t: " + std::to_string(res));
+        }
+
+        // --- TEST 7: Precyzja Double -> Float (Out of range) ---
+        {
+            double huge = 1e40; // Poza zakresem float (~3.4e38)
+            auto res = to<float>(huge);
+            bool is_inf = (res == std::numeric_limits<float>::max());
+            report("Float Overflow", is_inf, "double(1e40) -> float: max_float");
+        }
+
+        // --- TEST 7: Precyzja Float -> Double (always OK) ---
+        {
+            float huge = 3e38; // Poza zakresem float (~3.4e38)
+            auto res = to<double>(huge);
+            bool is_ok = (res == huge);
+            report("Float->Double", is_ok , "float(3e38) -> double OK");
+        }
+
+        // --- TEST 7: Precyzja Float -> Double (always OK) ---
+        {
+            float huge = 3e38; // Poza zakresem float (~3.4e38)
+            auto res = to<double>(huge);
+            bool is_ok = (res == huge);
+            report("Float->Double", is_ok , "float(3e38) -> double OK");
+        }
+
+        // --- TEST 7: Precyzja unsigned long -> Double (precision lost) ---
+        {
+            unsigned long huge = std::numeric_limits<unsigned long>::max(); // Poza dokładnościa double
+            auto res = to<double>(huge);
+            bool is_ok = !((unsigned long)res == huge);
+            report("Large unsigned long->Double", is_ok , "Hidden lost of precision");
+        }
+
+        // --- PODSUMOWANIE ---
+        o <<COLOR4<< "\n";
+        if (all_ok) {
+            o << ">>> WYNIK KONCOWY: WSZYSTKIE TESTY 'to<T>' OK <<<\n";
+        } else {
+            o <<COLOR3<< ">>> WYNIK KONCOWY: WYKRYTO BLEDY W SZABLONIE 'to<T>' <<<\n"<<COLOR4;
+        }
+        o << "====================================================================\n"<<NOCOLO;
+
+        return all_ok;
+    }
+
 int main() {
     using namespace merry_tools::tests;
 
     std::cout << "Hello, World!" << std::endl << std::flush;
-
-    dummy2 testDummy2;
 
     if(!test_ios_benders(std::clog) ) return 1;
     if(!test_vectors_bending(std::clog)) return 2;
     if(!test_uniques_val(std::clog)) return 3;
     if(!test_rust_like(std::clog)) return 4;
     if(!test_rust_like2(std::clog)) return 4;
+    if(!test_saturating_to(std::clog)) return 6;
     if(!test_safe_casts(std::clog)) return 5;
 
+    dummy2 testDummy2;
     testDummy2.good=true;  //Valid
     //testDummy2.good=1;   //Not valid
     //testDummy2.good=lgc_boolean{1};  //Not valid

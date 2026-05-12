@@ -1,6 +1,7 @@
 /** @file
  *  @brief Rust like numeric types and conversions.
  *  @date 2026-05-12 (last modification)
+ *        =========================================
  *  @details
  *      Created by borkowsk on 05.05.2026.
  *      In helpful assistance of Gemini :-)

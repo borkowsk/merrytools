@@ -1,6 +1,8 @@
 /// @file
 /// @brief IOS bender to magik standardowych strumieni.
-/// @date 2026-05-08 (last modification)
+/// @date 2026-05-12 (last modification)
+///       =============================================
+/// @details
 /// To bogato rozrodzona rodzinka pochodząca od ojca: `ios_bender`.
 /// Dzieci to `text_at_end`, `keep_io_flags`, `ios_teacher` a kolejne w drodze 👅.
 /// Więcej możliwości:
@@ -10,6 +12,7 @@
 ///
 #ifndef IOS_BENDERS_H
 #define IOS_BENDERS_H
+
 #include <iomanip>
 #include <iostream>
 

@@ -1,8 +1,9 @@
 /// @file
-/// @brief ....
+/// @brief Unikalne w różny sposób wartości.
 /// @date 2026-05-12 (modification)
+///       ==================================
 /// Created by borkowsk on 30.10.24.
-
+///
 #include "mth_fix_float.h"
 #include "mem_unique_val.h"
 #include "ios_benders.h"

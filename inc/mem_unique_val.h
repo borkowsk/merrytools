@@ -1,7 +1,9 @@
 /** @file
  *  @brief Klasy gwarantujące unikalność wartości.
- *  @date 2024-10-31 (modification)
- * Created by borkowsk on 30.10.24. */
+ *  @date 2026-05-12 (modification)
+ *        ========================================
+ * Created by borkowsk on 30.10.24.
+ */
 #ifndef MERRY_TOOLS_TESTS_MEM_UNIQUE_VAL_H
 #define MERRY_TOOLS_TESTS_MEM_UNIQUE_VAL_H
 

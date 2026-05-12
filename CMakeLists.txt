@@ -28,4 +28,3 @@ add_executable( merry_tests
         "tests/safecasttests/safecasttests.cpp"
 )
 
-inc/mth_to.hpp
