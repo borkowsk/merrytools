@@ -1,10 +1,10 @@
 /** @file
  *  @brief Rust like numeric types and conversions.
- *  @date 2026-05-08 (last modification)
+ *  @date 2026-05-12 (last modification)
  *  @details
  *      Created by borkowsk on 05.05.2026.
  *      In helpful assistance of Gemini :-)
- *  @date 2026-05-08 (last modification)
+ *  @date 2026-05-12 (last modification)
  */
 #ifndef RUST_LIKE_HPP
 #define RUST_LIKE_HPP
@@ -121,7 +121,9 @@ namespace rust_like
     /// - Jeśli wartość jest za mała (ujemna), zostanie przycięta do minimalnej wartości (0).
     /// - Jeśli wartością jest NaN, konwersja zwróci 0.
     /// Zgodnie ze standardem C++, rzutowanie wartości zmiennoprzecinkowej poza zakres typu całkowitego
-    /// (lub wartości NaN/Infinity) to Undefined Behavior (UB). Kompilator może wygenerować dowolny kod – od zwrócenia losowych śmieci z rejestru, przez dziwne zachowanie programu, aż po usunięcie całej gałęzi kodu w ramach optymalizacji.
+    /// (lub wartości NaN/Infinity) to Undefined Behavior (UB). Kompilator może wygenerować dowolny kod –
+    /// od zwrócenia losowych śmieci z rejestru, przez dziwne zachowanie programu, aż po usunięcie całej
+    /// gałęzi kodu w ramach optymalizacji.
     /// @note Pobieramy limity typu docelowego jako typ zmiennoprzecinkowy,
     ///       aby uniknąć przepełnienia podczas porównywania.
     template<typename TARGET_T, typename SOURCE_T>

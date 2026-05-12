@@ -1,6 +1,6 @@
 /** @file
  *  @brief Klasa bezpiecznych wartości logicznych.
- *  @date 2025-04-04 (modification)
+ *  @date 2026-05-12 (modification)
  *  @details Created by borkowsk on 04.04.25. */
 
 #include "lgc_boolean.h"

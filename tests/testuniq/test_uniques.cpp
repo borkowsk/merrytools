@@ -1,12 +1,14 @@
 /// @file
 /// @brief ....
-/// @date 2026-05-08 (modification)
+/// @date 2026-05-12 (modification)
 /// Created by borkowsk on 30.10.24.
 
 #include "mth_fix_float.h"
 #include "mem_unique_val.h"
+#include "ios_benders.h"
 #include <iostream>
 
+using namespace ::merry_tools::streams;
 using namespace ::merry_tools::math;
 using namespace ::merry_tools::memory;
 
@@ -42,8 +44,9 @@ namespace merry_tools::tests {
     };
 
     DEFINE_IN_CLASS_UNIQUE(dummy2,::merry_tools::math::UFloat16,unsigned,FIVE,5) ///< Required definition completing declaration in class.
-        using T_lim = std::numeric_limits<Target>;
     DEFINE_IN_CLASS_UNIQUE(dummy2,::merry_tools::math::UFloat16,unsigned,TEN,10) ///< Required definition completing declaration in class.
+
+    //using T_lim = std::numeric_limits<Target>;
 
     class dummy3: public dummy2
     {
@@ -88,6 +91,11 @@ namespace merry_tools::tests {
 
     void print_namespace_variables(std::ostream& o)
     {
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "           URUCHAMIANIE TESTÓW DLA WARTOŚCI UNIKALNYCH              \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
         o<<"five:"<<five<<std::endl;
         o<<"five2:"<<five2<<std::endl;
         o<<"ten:"<<ten<<std::endl;

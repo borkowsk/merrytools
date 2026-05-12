@@ -1,6 +1,6 @@
 /// @file
 /// @brief Test suite for `merry_tools`
-/// @date 2026-05-08 (modification)
+/// @date 2026-05-12 (modification)
 #include "mth_vectors.h"
 #include "mth_fix_float.h"
 #include "ios_benders.h"
@@ -22,6 +22,7 @@ UNIQUE_GLOBAL(UFloat16,unsigned,TWO,2)  ///< Global `unique_val` for `UFloat16` 
 
 namespace merry_tools::tests {
     void print_namespace_variables(std::ostream& o);
+    int test_safe_casts(std::ostream& o);
 
     // Also declared in test_uniques, but with different IN_CLASS_UNIQUE 👅
     class dummy2 {
@@ -41,6 +42,11 @@ namespace merry_tools::tests {
 
     bool test_uniques_val(std::ostream& o)
     {
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "                  URUCHAMIANIE TESTÓW `uniq_values`                 \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
         o<<NOCOLO<<"\n"<<COLOR2<<"Now tests for unique values..."<<COLERR<<std::endl;
 
         auto one_=::get(ONE);
@@ -54,6 +60,11 @@ namespace merry_tools::tests {
 
     bool test_ios_benders(std::ostream& o)
     {
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "                URUCHAMIANIE TESTÓW DLA `ios_benders`               \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
         static unsigned testUInt=0xf0f0f0f;
         guard<u_int16_t,0xface> memGuard;
 
@@ -80,6 +91,12 @@ namespace merry_tools::tests {
 
     bool test_vectors_bending(std::ostream& o)
     {
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "               URUCHAMIANIE TESTÓW SKALARÓW I WEKTORÓW              \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
+
         keep_io_flags keep_flags_of(o);
         o<<NOCOLO<<"\n"<<COLOR2<<"Now tests for vectors bending..."<<COLERR<<std::endl;
         text_at_end at_end(o, "Vectors benders thank you for your attention\n\n");
@@ -167,44 +184,51 @@ namespace merry_tools::tests {
         return true;
     }
 
-    // ============================================================================
-    // WSTĘPNA FUNKCJA TESTUJĄCA DLA rust_like
-    // ============================================================================
+    /// WSTĘPNA FUNKCJA TESTUJĄCA DLA rust_like.
     bool test_rust_like(std::ostream& o)
     {
         using namespace rust_like;
         using namespace std;
+        o << COLOR2;
+        o << "====================================================================\n";
+        o << "               URUCHAMIANIE WSTĘPNYCH TESTOW 'as<T>()'              \n";
+        o << "====================================================================\n\n";
+        o << NOCOLO;
 #if HAS_F128
         f128 kosmiczna_precyzja = 3.14159265358979323846264338327950288Q;
         // Uwaga: przy __float128 używa się przyrostka 'Q' (np. 1.0Q) zamiast 'f' czy 'L'
-        o<<"Wsparcie dla f128 jest aktywne!<\n"<<endl;
+        o<<COLOR4<<"Wsparcie dla f128 jest aktywne!<\n"<<NOCOLO<<endl;
 #else
-        o<<"Ta platforma nie obsługuje natywnie 128-bitowych liczb zmiennoprzecinkowych."<<endl;
+        o<<COLOR5<<"Ta platforma nie obsługuje natywnie 128-bitowych liczb zmiennoprzecinkowych."<<NOCOLO<<endl;
 #endif
         // Przeciążenie 1: Integral -> Integral
         u8 a = as<u8>(300u); // Standardowe obcięcie bitów (300 % 256) -> wynik: 44
-        o << "300 as u8 = " << (int)a << std::endl;
+        o <<COLOR4<<"300 as u8 = "<<NOCOLO<< (int)a << std::endl;
+
+        // Przeciążenie 1: Small Integral -> Larger Integral
+        auto a1 = as<u16>(a);
+        o <<COLOR4<<"u8 as u16 = "<<NOCOLO<< a1 << std::endl;
 
         // Przeciążenie 2: Float -> Integral
         u8 b = as<u8>(300.5f); // Wartość > 255 nasyca do max -> wynik: 255
         u8 c = as<u8>(-50.0);  // Wartość < 0 nasyca do min -> wynik: 0
 
-        o << "300.5f as u8 = " << (int)b << std::endl;
-        o << "-50.0 as u8  = " << (int)c << std::endl;
+        o <<COLOR4<< "300.5f as u8 = "<<NOCOLO << (int)b << std::endl;
+        o <<COLOR4<< "-50.0 as u8  = "<<NOCOLO << (int)c << std::endl;
 
         try {
-            // 1. Dokładna konwersja (mieści się w 24 bitach mantysy float)
+            o<<COLOR4<<"1. Dokładna konwersja (mieści się w 24 bitach mantysy float)"<<NOCOLO<<endl;
             int64_t bezpieczna = 16777215; // 2^24 - 1
             float f1 = as<float>(bezpieczna);
             o << "OK: " << f1 << "\n"; // Zadziała bez problemu
 
-            // 2. Konwersja ze stratą precyzji (wymaga więcej niż 24 bity)
+            o<<COLOR4<<"2. Konwersja ze stratą precyzji (wymaga więcej niż 24 bity)"<<NOCOLO<<endl;
             int64_t niebezpieczna = 16777217; // 2^24 + 1
             float f2 = as<float>(niebezpieczna); // Rzuci wyjątek!
             o << "To się nie wypisze: " << f2 << "\n";
 
         } catch (const std::exception& e) {
-            o << "ERROR: " << e.what() << "\n";
+            o <<COLOR1<< "ERROR: " <<COLOR5<< e.what() <<NOCOLO<< "\n";
         }
 
         // BŁĘDY KOMPILACJI:
@@ -214,15 +238,14 @@ namespace merry_tools::tests {
         //float f = as<float>(3.14);
 
         /// Przykład B: Próba użycia własnego typu
-        UFloat16 obiekt;
-        int x = as<int>(obiekt);
+        //UFloat16 obiekt;
+        //int x = as<int>(obiekt);
 
         return true;
     }
 
-    // ============================================================================
-    // GŁÓWNA FUNKCJA TESTUJĄCA DLA rust_like
-    // ============================================================================
+
+    /// GŁÓWNA FUNKCJA TESTUJĄCA DLA `rust_like`.
     bool test_rust_like2(std::ostream& o)
     {
         using namespace rust_like;
@@ -231,9 +254,11 @@ namespace merry_tools::tests {
         bool caly_test_ok = true;
         int numer_testu = 1;
 
+        o << COLOR2;
         o << "====================================================================\n";
         o << "             URUCHAMIANIE TESTOW NUMERYCZNYCH 'as<T>()'            \n";
         o << "====================================================================\n\n";
+        o << NOCOLO;
 
         // Lambda ułatwiająca formatowanie i zbieranie wyników
         auto raportuj = [&](const char* nazwa, bool warunek_sukcesu, const std::string& info) {
@@ -340,13 +365,15 @@ namespace merry_tools::tests {
         }
 
         // --- PODSUMOWANIE ---
+        o << COLOR3;
         o << "\n====================================================================\n";
         if (caly_test_ok) {
-            o << "   STATUS KONCOWY: WSZYSTKIE TESTY ZAKONCZONE SUKCESEM [ OK ]       \n";
+            o <<COLOR2<< "   STATUS KONCOWY: WSZYSTKIE TESTY ZAKONCZONE SUKCESEM [ OK ]       \n"<< COLOR3;
         } else {
-            o << "   STATUS KONCOWY: NIEKTÓRE TESTY ZAKONCZYLY SIE BLĘDEM [ FAIL ]    \n";
+            o <<COLOR5<< "   STATUS KONCOWY: NIEKTÓRE TESTY ZAKONCZYLY SIE BLĘDEM [ FAIL ]    \n"<< COLOR3;
         }
         o << "====================================================================\n";
+        o << NOCOLO;
 
         return caly_test_ok;
     }
@@ -365,6 +392,7 @@ int main() {
     if(!test_uniques_val(std::clog)) return 3;
     if(!test_rust_like(std::clog)) return 4;
     if(!test_rust_like2(std::clog)) return 4;
+    if(!test_safe_casts(std::clog)) return 5;
 
     testDummy2.good=true;  //Valid
     //testDummy2.good=1;   //Not valid
